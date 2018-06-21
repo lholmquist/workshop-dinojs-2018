@@ -1,0 +1,117 @@
+<!doctype HTML>
+<html>
+<head>
+<title>DinosaurJS Serverless Frontend</title>
+<style>
+body {
+  overflow: hidden;
+}
+#container {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+}
+#list {
+  flex-grow: 1;
+  padding: 10px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+#new {
+  border-left: 1px solid #888;
+  padding: 10px;
+}
+#new > form {
+  display: grid;
+  grid-template-columns: 40% 60%;
+  grid-template-rows: auto auto auto auto;
+  grid-row-gap: 10px;
+}
+#new > form > button {
+  grid-column-start: 1;
+  grid-column-end: 3;
+}
+.dinosaurContainer {
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-rows: auto auto auto;
+  grid-row-gap: 10px;
+}
+.dinosaurContainer > img {
+  max-width: 400px;
+}
+</style>
+<script>
+
+const ENDPOINT = 'https://<YOUR FUNCTION NAME HERE>.azurewebsites.net/api';
+
+function updateList() {
+  console.log('Updating dinosaur list');
+  fetch(`${ENDPOINT}/items`)
+    .then((response) => response.json())
+    .then((data) => {
+      const listElement = document.getElementById("list");
+      while (listElement.hasChildNodes()) {
+        listElement.removeChild(listElement.lastChild);
+      }
+      for (const dinosaur of data) {
+        const nameElement = document.createElement('span');
+        nameElement.innerText = `Name: ${dinosaur.name}`;
+        const typeElement = document.createElement('span');
+        typeElement.innerText = `Type: ${dinosaur.type}`;
+        const imageElement = document.createElement('img');
+        imageElement.src = dinosaur.image;
+        const containerElement = document.createElement('div');
+        containerElement.setAttribute('class', 'dinosaurContainer');
+        containerElement.appendChild(nameElement);
+        containerElement.appendChild(typeElement);
+        containerElement.appendChild(imageElement);
+        listElement.appendChild(containerElement);
+      }
+      console.log('Done updating dinosaur list');
+    });
+}
+
+function saveNewDinosaur() {
+  console.log('Saving new dinosaur');
+  fetch(`${ENDPOINT}/items`, {
+    body: JSON.stringify({
+      name: document.getElementById('newName').value,
+      type: document.getElementById('newType').value,
+      imageURL: document.getElementById('newImageURL').value
+    }),
+    headers: {
+      'content-type': 'application/json'
+    },
+    mode: 'cors',
+    method: 'PUT'
+  }).then((response) => {
+    console.log('Done saving dinosaur');
+    updateList();
+  })
+  return false;
+}
+
+</script>
+</head>
+<body>
+  <div id="container">
+    <div id="list">Loading</div>
+    <div id="new">
+      <form>
+        <label for="newName">Name:</label>
+        <input type="text" id="newName" />
+        <label for="newType">Type:</label>
+        <input type="text" id="newType" />
+        <label for="newImageURL">Image URL:</label>
+        <input type="text" id="newImageURL" />
+        <button onclick="return saveNewDinosaur();">Add</button>
+      </form>
+    </div>
+  </div>
+  <script>updateList();</script>
+</body>
+</html>
