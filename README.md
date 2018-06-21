@@ -63,6 +63,18 @@ This Azure Function is the image helper function that was mentioned above, and w
 
 For bonus points, add a cache to this Azure Function that behaves like the cache in the other Azure Function. You might be asking yourself "why would I cache in both places?" In a normal monolith application, there wouldn't be a need, but it can be needed here! If, for example, the GET function that calls this one goes cold while this one is hot, the GET function's cache would be empty, but this one wouldn't be.
 
+## Stretch Goals
+
+### Bundling
+
+Once you've implemented your Azure Functions and gotten everything working correctly, let's improve cold-start time by using [Azure Function Pack](https://github.com/Azure/azure-functions-pack) to bundle your source and dependencies into a single file.
+
+### Debugging
+
+Console debugging can only get us so far, and Azure Functions has a number of tools for using a debugger in Visual Studio and Visual Studio Code.
+
+For Visual Studio Code, insteall the Azure extension and follow the instructions at https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurefunctions to set up debugging for Azure Functions
+
 # License
 
 MIT License
